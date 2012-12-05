@@ -5,13 +5,10 @@
 # author     : Jianing Yang <jianingy.yang AT gmail DOT com>
 
 use FindBin qw/$Bin/;
-use lib "$Bin/modules";
 use lib "$Bin/lib";
 
 use strict;
 use warnings;
-
-use Module::Load;
 
 sub err
 {
@@ -33,7 +30,12 @@ while (<>) {
     my ($module_name, $routine_name, $args) = split /\s+/, $_, 3;
 
     my $module = "NetBMS::".ucfirst($module_name);
-    eval { load "$module"; 1 } or err('module does not exist');
+    eval {
+        (my $path = $module) =~ s#::#/#g;
+        require 'modules/' . $path . '.pm';
+        $module->import();
+        1;
+    } or err("module does not exist: $@");
 
     $routine_name = 'default' unless $routine_name;
     my $routine = $module."::".$routine_name;
