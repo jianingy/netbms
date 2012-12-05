@@ -26,15 +26,15 @@ sub sync
 	  if (@entry) {  # if user exists on this box
               # update user info
               my $uid = $entry[2];
-              print STDERR "WARN: uid doesn't match ($uid <-- $user{acctuid})\n"
+              &main::out('WARN', "uid doesn't match ($uid <-- $user{acctuid})")
                   if $uid != $user{acctuid};
               my $out = qx#/usr/sbin/usermod 2>&1 -u '$user{acctuid}' -g 500 -p '$user{acctpass}' '$user{acctname}'#;
-              print "ERROR: usermod failed: $out\n" if $?;
+              &main::out('ERROR', "usermod failed: $out") if $?;
 	  } else {
               # add new user 
-              print STDERR "INFO: newuser $user{acctname}\n";
+              &main::out('INFO', "newuser $user{acctname}");
               my $out = qx#/usr/sbin/useradd 2>&1 -u '$user{acctuid}' -g 500 -p '$user{acctpass}' '$user{acctname}'#;
-              print STDERR "ERROR: useradd failed: $out\n" if $?;
+              &mainLLout('ERROR', "useradd failed: $out") if $?;
 	  }
       }
 
@@ -44,7 +44,7 @@ sub sync
         my ($user, $uid) = (split /:/)[0,2];
         next if $uid < 500;
         if (not defined($users{$user})) {
-            print STDERR "WARN: rogue user $user $uid\n";
+            &main::out('WARN', "rogue user $user $uid");
         }
       }
       close PASSWD;

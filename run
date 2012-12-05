@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec 2>&1
+exec /opt/djbware/tcpserver -l 0 -R -H -X 0 12345 ./netbms.pl

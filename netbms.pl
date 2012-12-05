@@ -10,9 +10,15 @@ use lib "$Bin/lib";
 use strict;
 use warnings;
 
+sub out
+{
+    my ($cls, $msg) = @_;
+    print "$cls: $msg\n";
+}
+
 sub err
 {
-    print STDERR "ERROR: ".(shift)."\n";
+    print STDERR "ERROR: " . (shift) . "\n";
     exit(1);
 }
 
@@ -35,7 +41,7 @@ while (<>) {
         require 'modules/' . $path . '.pm';
         $module->import();
         1;
-    } or err("module does not exist: $@");
+    } or err("module error: $@");
 
     $routine_name = 'default' unless $routine_name;
     my $routine = $module."::".$routine_name;
