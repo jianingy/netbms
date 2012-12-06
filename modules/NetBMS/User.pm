@@ -8,6 +8,7 @@ package NetBMS::User;
 
 use JSON::RPC::Client;
 use Data::Dumper;
+use Sys::Hostname;
 
 my $account_server = 'http://192.168.1.111:80/postgres/';
 
@@ -17,7 +18,7 @@ sub sync
       my $client = new JSON::RPC::Client;
 
       $client->prepare($account_server, ['acct']);
-      foreach (@{$client->acct({_node => 'wm001.adt100.net'})}) {
+      foreach (@{$client->acct({_node => hostname})}) {
 	  my %user = %{$_};
 	  my @entry = getpwnam($user{acctname});
 
