@@ -31,7 +31,8 @@ use Sys::Hostname;
 use FindBin qw/$Bin/;
 
 our $account_server = undef; 
-our $account_default_gid = undef;
+our $account_default_gid = 100;
+our $account_umask = '022';
 
 require "$Bin/conf/config.pl";
 
@@ -43,7 +44,7 @@ sub sync
 
       &main::err('user module configuration error')
           unless defined($account_server) && defined($account_default_gid);
-
+      print "umask = $account_umask\n";
       $client->prepare($account_server, ['acct']);
       foreach (@{$client->acct({_node => hostname})}) {
 	  my %user = %{$_};
@@ -62,7 +63,7 @@ sub sync
 	  } else {
               # add new user 
               &main::out('INFO', "newuser $user{acctname}");
-              my $out = qx#/usr/sbin/useradd 2>&1 -u '$user{acctuid}' -g $account_default_gid -p '$user{acctpass}' '$user{acctname}'#;
+              my $out = qx#/usr/sbin/useradd 2>&1 -u '$user{acctuid}' -g $account_default_gid -p '$user{acctpass}' -K 'UMASK=$account_umask' '$user{acctname}'#;
               &mainLLout('ERROR', "useradd failed: $out") if $?;
 	  }
       }
