@@ -44,7 +44,7 @@ sub sync
 
       &main::err('user module configuration error')
           unless defined($account_server) && defined($account_default_gid);
-      print "umask = $account_umask\n";
+
       $client->prepare($account_server, ['acct']);
       foreach (@{$client->acct({_node => hostname})}) {
 	  my %user = %{$_};
